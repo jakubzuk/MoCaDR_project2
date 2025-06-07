@@ -46,7 +46,6 @@ ThetaB[4-1]=1-np.sum(ThetaB)
 Theta = np.zeros((4,w))
 Theta[:(w),:]=np.random.random((3,w))/w
 Theta[w,:]=1-np.sum(Theta,axis=0)
-
 # BONUS TASK: if estimate_alpha == "yes", then
 # alpha must also be estimated (ignore the value provided in input_file)
 
