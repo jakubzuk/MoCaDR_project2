@@ -62,9 +62,6 @@ def em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-10):
     Theta, ThetaB = Theta.round(20), ThetaB.round(20)
     return Theta, ThetaB
 
-
-    return Theta, ThetaB 
-
 def var_dist(dist_1, dist_2):
     return 0.5 * np.sum(np.abs(dist_1 - dist_2))
 
