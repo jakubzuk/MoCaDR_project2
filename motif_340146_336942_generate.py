@@ -44,10 +44,10 @@ def generate_sample(w, k, alpha, Theta, ThetaB):
         if Z[i]:
             r = np.zeros(shape=w)
             for j in range(w):
-                r[j] = np.random.choice(np.arange(1, 5, step=1), p=Theta[:, j])
+                r[j] = np.random.choice(np.arange(0, 4, step=1), p=Theta[:, j])
             X[i] = r
         else:
-            X[i] = np.random.choice(np.arange(1, 5, step=1), size=w, p=ThetaB)
+            X[i] = np.random.choice(np.arange(0, 4, step=1), size=w, p=ThetaB)
     return X, alpha
 
 
