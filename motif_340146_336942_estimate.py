@@ -2,7 +2,9 @@ import json
 
 import numpy as np
  
-import argparse 
+import argparse
+
+from helper_functions import em_algorithm
 
  
 # Read-in params
@@ -29,16 +31,12 @@ with open(input_file, 'r') as inputfile:
  
  
 alpha=data['alpha']
-X= np.asarray(data['X'])
+X = np.asarray(data['X'])
 k,w = X.shape
-
-
 # TO DO: MAIN PART: Estimate Theta and ThetaB using EM and save to output_file
 # Theta0 = vector of length w
 # Theta = matrix of size d by w = 4 by w
 # example is random (placeholder)
-
-
 ThetaB=np.zeros(4)
 ThetaB[:(4-1)]=np.random.rand(4-1)/4
 ThetaB[4-1]=1-np.sum(ThetaB)
@@ -46,8 +44,13 @@ ThetaB[4-1]=1-np.sum(ThetaB)
 Theta = np.zeros((4,w))
 Theta[:(w),:]=np.random.random((3,w))/w
 Theta[w,:]=1-np.sum(Theta,axis=0)
+
+Theta, ThetaB = em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-10)
+
 # BONUS TASK: if estimate_alpha == "yes", then
 # alpha must also be estimated (ignore the value provided in input_file)
+
+
 
 estimated_params = {
     "alpha" : alpha,            # we "copy" this alpha — it was not estimated

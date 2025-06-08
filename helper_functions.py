@@ -59,5 +59,5 @@ def em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-10):
         if abs(new_ll - ll) < tol:
             print(f"number of iterations: {maximal_t}")
             break
-    Theta, ThetaB = Theta.round(3), ThetaB.round(3)
+    Theta, ThetaB = Theta.round(20), ThetaB.round(20)
     return Theta, ThetaB
