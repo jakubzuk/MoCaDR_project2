@@ -44,3 +44,17 @@ def em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-5):
             break
 
     return Theta, ThetaB 
+
+def var_dist(dist_1, dist_2):
+    return 0.5 * np.sum(np.abs(dist_1 - dist_2))
+
+def distance(dist_1, dist_2, dist_1_bg, dist_2_bg):
+    w = dist_1.shape[1]
+    d_bg = var_dist(dist_1_bg, dist_2_bg)
+    d_motif = 0.0
+    for i in range(w):
+        true = dist_1[:, i]
+        est  = dist_2[:, i]
+        d_motif += var_dist(true, est)
+
+    return (d_bg + d_motif) / (w + 1)
