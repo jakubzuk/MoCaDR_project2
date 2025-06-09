@@ -68,7 +68,7 @@ from motif_340146_336942_generate import generate_sample
 #     plt.ylim(0, 0.5)
 #     plt.show()
 
-def visualize_k(param_file = "params_set1.json", ran = [50*k for k in range(1, 21)], av_count=30):
+def visualize_k(param_file = "params_set1.json", ran = [50*k for k in range(1, 101)], av_count=3):
 
     results = []
 
@@ -270,12 +270,10 @@ def visualize_w(param_files, av_count=15):
             'dtv_bg_std': np.std(run_dtvs_bg)
         })
 
-    # --- Step 2: Create the plot ---
     if not results:
         print("No results to plot.")
         return
 
-    # Sort results by w for clean plotting
     results.sort(key=lambda r: r['w'])
 
     w_vals = [r['w'] for r in results]
@@ -283,29 +281,27 @@ def visualize_w(param_files, av_count=15):
     dtv_stds = [r['dtv_std'] for r in results]
     motif_means = [r['dtv_motif_mean'] for r in results]
     bg_means = [r['dtv_bg_mean'] for r in results]
-    k_val = results[0]['k']  # Assuming k is constant across files for the title
+    k_val = results[0]['k']
 
     plt.style.use('seaborn-v0_8-whitegrid')
     fig, ax = plt.subplots(figsize=(10, 6))
 
-    # Plot total d_tv with error bars
     ax.errorbar(w_vals, dtv_means, yerr=dtv_stds, fmt='-o', capsize=5, label='Total $d_{tv}$ (Avg)')
 
-    # Plot components
     ax.plot(w_vals, motif_means, '--s', label='Motif $d_{tv}$', alpha=0.8)
     ax.plot(w_vals, bg_means, '--^', label='Background $d_{tv}$', alpha=0.8)
 
-    ax.set_title(f'Algorithm Performance vs. Motif Length (w)\n(k={k_val}, α={alpha}, {av_count} runs per point)')
+    ax.set_title(f'Algorithm Performance vs. Motif Length (w) (random probabilities)  \n(k={k_val}, α={alpha}, {av_count} runs per point)')
     ax.set_xlabel("Motif Length (w)")
     ax.set_ylabel("Average Total Variation Distance ($d_{tv}$)")
-    ax.set_xticks(w_vals)  # Ensure all w values are shown as ticks
+    ax.set_xticks(w_vals)
     ax.legend()
     ax.set_ylim(bottom=0)
     plt.tight_layout()
     plt.show()
 
-# param_files = [f"params_set_w{w_val}.json" for w_val in [3, 5, 8, 12]]
-# visualize_w(param_files=param_files, av_count=15)
+param_files = [f"params_random_w{w_val}.json" for w_val in [3, 5, 8, 12]]
+visualize_w(param_files=param_files, av_count=15)
 
 def visualize_motif_strength(strength_param_files, strength_labels, av_count=15):
     results = []
