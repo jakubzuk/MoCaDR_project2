@@ -7,7 +7,7 @@ def compute_log_likehood(X, alpha, Theta, ThetaB):
 
     return np.sum(np.log(alpha * np.exp(log_motif) + (1 - alpha) * np.exp(log_bg)))
 
-def em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-10):
+def em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-100):
 
     X = np.array(X, dtype=int)
     k, w = X.shape
@@ -74,4 +74,4 @@ def distance(dist_1, dist_2, dist_1_bg, dist_2_bg):
         est  = dist_2[:, i]
         d_motif += var_dist(true, est)
 
-    return (d_bg + d_motif) / (w + 1)
+    return d_bg, d_motif / w, (d_bg + d_motif) / (w + 1)
