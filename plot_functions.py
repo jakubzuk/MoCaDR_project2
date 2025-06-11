@@ -88,13 +88,11 @@ def visualize_k(param_file = "params_set1.json", ran = [50*k for k in range(1, 1
             np.random.seed(42+i)
             X, _ = generate_sample(w, k, alpha, TrueTheta, TrueThetaB)
 
-            ThetaB = np.zeros(4)
-            ThetaB[:(4 - 1)] = np.random.rand(4 - 1) / 4
-            ThetaB[4 - 1] = 1 - np.sum(ThetaB)
+            Theta = np.random.rand(4, w)
+            Theta = Theta / Theta.sum(axis=0)
 
-            Theta = np.zeros((4, w))
-            Theta[:(w), :] = np.random.random((3, w)) / w
-            Theta[w, :] = 1 - np.sum(Theta, axis=0)
+            ThetaB = np.random.rand(4)
+            ThetaB = ThetaB / ThetaB.sum()
 
             Theta, ThetaB = em_algorithm(X, alpha, Theta, ThetaB, max_iter=1000, tol=1e-10)
 
@@ -166,13 +164,11 @@ def visualize_alpha(param_file = "params_set1.json", ran = [10*a/100 for a in ra
             np.random.seed(42+i)
             X, _ = generate_sample(w, k, alpha, TrueTheta, TrueThetaB)
 
-            ThetaB = np.zeros(4)
-            ThetaB[:(4 - 1)] = np.random.rand(4 - 1) / 4
-            ThetaB[4 - 1] = 1 - np.sum(ThetaB)
+            Theta = np.random.rand(4, w)
+            Theta = Theta / Theta.sum(axis=0)
 
-            Theta = np.zeros((4, w))
-            Theta[:(w), :] = np.random.random((3, w)) / w
-            Theta[w, :] = 1 - np.sum(Theta, axis=0)
+            ThetaB = np.random.rand(4)
+            ThetaB = ThetaB / ThetaB.sum()
 
             Theta, ThetaB = em_algorithm(X, alpha, Theta, ThetaB, max_iter=1000, tol=1e-10)
 
@@ -223,6 +219,7 @@ def visualize_alpha(param_file = "params_set1.json", ran = [10*a/100 for a in ra
     ax.set_ylim(bottom=0)
     plt.tight_layout()
     plt.show()
+
 # visualize_alpha()
 
 
@@ -300,8 +297,8 @@ def visualize_w(param_files, av_count=15):
     plt.tight_layout()
     plt.show()
 
-param_files = [f"params_random_w{w_val}.json" for w_val in [3, 5, 8, 12]]
-visualize_w(param_files=param_files, av_count=15)
+# param_files = [f"params_random_w{w_val}.json" for w_val in [3, 5, 8, 12]]
+# visualize_w(param_files=param_files, av_count=15)
 
 def visualize_motif_strength(strength_param_files, strength_labels, av_count=15):
     results = []
@@ -384,3 +381,84 @@ def visualize_motif_strength(strength_param_files, strength_labels, av_count=15)
 #     strength_labels=bar_labels,
 #     av_count=15
 # )
+
+import matplotlib.pyplot as plt
+import json
+from helper_functions import *
+from motif_340146_336942_generate import generate_sample
+
+
+def visualize_ll(param_file = "params_set1.json", av_count=15):
+
+    results = []
+
+    with open(param_file, 'r') as inputfile:
+        params = json.load(inputfile)
+
+    w = params['w']
+    alpha = params['alpha']
+    k = params['k']
+    TrueTheta = np.asarray(params['Theta'])
+    TrueThetaB = np.asarray(params['ThetaB'])
+
+    ll = []
+    ll_d = []
+    for i in range(av_count):
+        np.random.seed(42+i)
+        X, _ = generate_sample(w, k, alpha, TrueTheta, TrueThetaB)
+
+        ThetaB = np.zeros(4)
+        ThetaB[:(4 - 1)] = np.random.rand(4 - 1) / 4
+        ThetaB[4 - 1] = 1 - np.sum(ThetaB)
+
+        Theta = np.zeros((4, w))
+        Theta[:(w), :] = np.random.random((3, w)) / w
+        Theta[w, :] = 1 - np.sum(Theta, axis=0)
+
+        _, _, ll_t, ll_dt = em_algorithm(X, alpha, Theta, ThetaB, max_iter=100, tol=1e-10)
+
+
+        ll.append(ll_t)
+        ll_d.append(ll_dt)
+    ll = np.array(ll)
+    ll_d = np.array(ll_d)
+
+
+    ll_means = np.mean(ll, axis=0)
+    ll_stds = np.std(ll, axis=0)
+    ll_d_means = np.mean(ll_d, axis=0)
+    ll_d_stds = np.std(ll_d, axis=0)
+
+
+    plt.style.use('seaborn-v0_8-whitegrid')
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    iterations_show = [i for i in range(1, 101, 1)]
+    print(len(ll_means))
+    ax.errorbar(iterations_show, ll_means, yerr=ll_stds, fmt='-o', capsize=5, label='average log-likelihood value')
+
+    ax.set_title(f'Mean Log-likelihood Values Across Iterations of EM Algorithm\n(α = {alpha}, k={k}, w={w}, {av_count} runs per point)')
+    ax.set_xlabel("Iteration")
+    ax.set_ylabel("Average Log-likelihood Value")
+    ax.set_xticks(iterations_show)
+    ax.legend()
+    plt.tight_layout()
+    plt.show()
+
+    plt.style.use('seaborn-v0_8-whitegrid')
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    ax.errorbar(iterations_show, ll_d_means, fmt='-o', capsize=5, label='average log-likelihood value')
+
+    ax.set_title(
+        f'Mean Log-likelihood Differences Across Iterations of EM Algorithm\n(α = {alpha}, k={k}, w={w}, {av_count} runs per point)')
+    ax.set_xlabel("Iteration")
+    ax.set_ylabel("Average Log-likelihood Difference (log scale)")
+    # ax.set_xticks(iterations_show)
+    ax.legend()
+    plt.yscale('log')
+    plt.tight_layout()
+    plt.show()
+
+
+# visualize_ll()
