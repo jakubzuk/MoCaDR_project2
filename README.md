@@ -54,18 +54,3 @@ Use
    python3 motif_340146_336942_estimate.py --input *input --output *output_file_name
 ```
 to estimate parameter $\boldsymbol \Theta$ from which comes the data.
-
-### All possible parser arguments
-| Argument                 | Type   | Default                             | Description                                                                                   |
-|--------------------------|--------|-------------------------------------|-----------------------------------------------------------------------------------------------|
-| `--train`                | str    | `"no"`                              | Whether to run training. Use `"yes"` to train, `"no"` to skip.                                |
-| `--predict`              | str    | `"no"`                              | Whether to run prediction. Use `"yes"` to predict, `"no"` to skip.                            |
-| `--train_file`           | str    | `"data/ratings.csv"`                | Path to your training CSV (`userId,movieId,rating`).                                          |
-| `--input_file`           | str    | `"data/preds.csv"`                  | Path to your test CSV for prediction (`userId,movieId`).                                      |
-| `--model_path`           | str    | `"models_trained/ALL_models.pkl"`   | Where to save (in train mode) or load (in predict mode) your pickled model data.              |
-| `--output_file`          | str    | `"predictions/preds.csv"`           | Where to write your predicted ratings (`userId,movieId,rating`).                              |
-| `--alg`                  | str    | `"ALL"`                             | Which algorithm to use: one of `NMF`, `SVD1`, `SVD2`, `SGD` or `ALL`.                         |
-|--------------------------|--------|-------------------------------------|-----------------------------------------------------------------------------------------------|
-| `--r`                    | int    | 0                                   | r to use for training (0 -> searching for best r)                                             |
-| `--print_rmse_plots`     | str    | "no"                                | RMSE plot generation: 'yes' while training to save used algorithm RMSE plot                   |
-| `--print_impute_plots`   | str    | "no"                                | Imputation method comparison plot generation: 'yes' while training to save used algorithm plot|
