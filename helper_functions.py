@@ -65,7 +65,7 @@ def em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-100, plot_ll=F
 def var_dist(dist_1, dist_2):
     return 0.5 * np.sum(np.abs(dist_1 - dist_2))
 
-def distance(dist_1, dist_2, dist_1_bg, dist_2_bg):
+def distance(dist_1, dist_2, dist_1_bg, dist_2_bg, plot=False):
     w = dist_1.shape[1]
     d_bg = var_dist(dist_1_bg, dist_2_bg)
     d_motif = 0.0
@@ -74,4 +74,7 @@ def distance(dist_1, dist_2, dist_1_bg, dist_2_bg):
         est  = dist_2[:, i]
         d_motif += var_dist(true, est)
 
-    return d_bg, d_motif / w, (d_bg + d_motif) / (w + 1)
+    if plot:
+        return d_bg, d_motif / w, (d_bg + d_motif) / (w + 1)
+
+    return (d_bg + d_motif) / (w + 1)

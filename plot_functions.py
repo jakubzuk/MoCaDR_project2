@@ -33,7 +33,7 @@ def visualize_k(param_file = "params_set1.json", ran = [50*k for k in range(1, 2
 
             Theta, ThetaB = em_algorithm(X, alpha, Theta, ThetaB, max_iter=1000, tol=1e-10)
 
-            bg_d, motif_d, total_d = distance(TrueTheta, Theta, TrueThetaB, ThetaB)
+            bg_d, motif_d, total_d = distance(TrueTheta, Theta, TrueThetaB, ThetaB, plot=True)
             d_bg.append(bg_d)
             d_motif.append(motif_d)
             d.append(total_d)
@@ -112,7 +112,7 @@ def visualize_alpha(param_file = "params_set1.json", ran = [10*a/100 for a in ra
             Theta, ThetaB = em_algorithm(X, alpha, Theta, ThetaB, max_iter=1000, tol=1e-10)
 
 
-            bg_d, motif_d, total_d = distance(TrueTheta, Theta, TrueThetaB, ThetaB)
+            bg_d, motif_d, total_d = distance(TrueTheta, Theta, TrueThetaB, ThetaB, plot=True)
             d_bg.append(bg_d)
             d_motif.append(motif_d)
             d.append(total_d)
@@ -191,7 +191,7 @@ def visualize_w(param_files, av_count=15):
 
             Theta_est, ThetaB_est = em_algorithm(X, alpha, Theta_init, ThetaB_init, max_iter=1000, tol=1e-10)
 
-            bg_d, motif_d, total_d = distance(TrueTheta, Theta_est, TrueThetaB, ThetaB_est)
+            bg_d, motif_d, total_d = distance(TrueTheta, Theta_est, TrueThetaB, ThetaB_est, plot=True)
 
             run_dtvs.append(total_d)
             run_dtvs_motif.append(motif_d)
@@ -247,32 +247,20 @@ def visualize_w(param_files, av_count=15):
 # visualize_w(param_files=param_files, av_count=15)
 
 def visualize_motif_strength_boxplot(strength_param_files, strength_labels, av_count=15):
-    """
-    Visualizes algorithm performance against motif strength using boxplots.
-
-    Each boxplot shows the distribution of the total variation distance error
-    over multiple simulation runs for a given motif strength.
-    """
-    # This list will hold the lists of run results for each parameter file.
-    # e.g., [[0.1, 0.12, 0.09, ...], [0.05, 0.04, 0.06, ...], ...]
     all_runs_data = []
-
-    # Store k and alpha for the plot title (assuming they are consistent)
     k, alpha = None, None
 
     for param_file in strength_param_files:
         with open(param_file, 'r') as f:
             params = json.load(f)
 
-        # Extract parameters. Store the last seen k and alpha for the title.
         w, k, alpha = params['w'], params['k'], params['alpha']
         TrueTheta = np.asarray(params['Theta'])
         TrueThetaB = np.asarray(params['ThetaB'])
 
-        # This list will store errors for the CURRENT strength level
+
         run_dtvs = []
         for i in range(av_count):
-            # Use a different seed for each run to ensure variability
             np.random.seed(42 + i)
 
             X, _ = generate_sample(w, k, alpha, TrueTheta, TrueThetaB)
@@ -285,10 +273,9 @@ def visualize_motif_strength_boxplot(strength_param_files, strength_labels, av_c
 
             Theta_est, ThetaB_est = em_algorithm(X, alpha, Theta_init, ThetaB_init, max_iter=1000, tol=1e-10)
 
-            _, _, total_error = distance(TrueTheta, Theta_est, TrueThetaB, ThetaB_est)
+            _, _, total_error = distance(TrueTheta, Theta_est, TrueThetaB, ThetaB_est, plot=True)
             run_dtvs.append(total_error)
 
-        # KEY CHANGE: Append the entire list of raw error values for this strength level
         all_runs_data.append(run_dtvs)
         print(f"Completed simulations for file: {param_file}")
 
@@ -296,19 +283,15 @@ def visualize_motif_strength_boxplot(strength_param_files, strength_labels, av_c
         print("No results to plot.")
         return
 
-    # --- Plotting Section ---
     plt.style.use('seaborn-v0_8-whitegrid')
     fig, ax = plt.subplots(figsize=(10, 7))
 
-    # KEY CHANGE: Use seaborn's boxplot to visualize the distribution of errors
     sns.boxplot(data=all_runs_data, ax=ax, palette="viridis", width=0.6)
 
-    # Update labels and title to be more descriptive of a distribution
     ax.set_ylabel("Distribution of Total Variation Distance ($d_{tv}$ Error)", fontsize=16)
     ax.set_xlabel("Motif Information Strength", fontsize=16)
-    ax.set_xticklabels(strength_labels, rotation=0, fontsize=16)  # Rotate for readability
+    ax.set_xticklabels(strength_labels, rotation=0, fontsize=16)
 
-    # Check if k and alpha were found before adding to title
     if k is not None and alpha is not None:
         title = f'Algorithm Performance vs. Motif Strength\n(k={k}, α={alpha}, {av_count} runs per strength level)'
     else:
