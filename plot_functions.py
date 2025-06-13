@@ -2,73 +2,10 @@ import matplotlib.pyplot as plt
 import json
 from helper_functions import *
 from motif_340146_336942_generate import generate_sample
+import seaborn as sns
 
 
-# def visualize_k(param_file = "params_set1.json", ran = [10*k for k in range(1, 51)], av_count=15):
-#     with open(param_file, 'r') as inputfile:
-#         params = json.load(inputfile)
-#
-#     w = params['w']
-#     alpha = params['alpha']
-#     TrueTheta = np.asarray(params['Theta'])
-#     TrueThetaB = np.asarray(params['ThetaB'])
-#
-#     dtv = []
-#     dtv_bg = []
-#     dtv_motif = []
-#     for k in ran:
-#         d = 0
-#         d_bg = 0
-#         d_motif = 0
-#         for i in range(av_count):
-#             np.random.seed(42+i)
-#             X, _ = generate_sample(w, k, alpha, TrueTheta, TrueThetaB)
-#
-#             ThetaB = np.zeros(4)
-#             ThetaB[:(4 - 1)] = np.random.rand(4 - 1) / 4
-#             ThetaB[4 - 1] = 1 - np.sum(ThetaB)
-#
-#             Theta = np.zeros((4, w))
-#             Theta[:(w), :] = np.random.random((3, w)) / w
-#             Theta[w, :] = 1 - np.sum(Theta, axis=0)
-#
-#             Theta, ThetaB = em_algorithm(X, alpha, Theta, ThetaB, max_iter=1000, tol=1e-10)
-#
-#             c = distance(TrueTheta, Theta, TrueThetaB, ThetaB)
-#             d_bg += c[0]
-#             d_motif += c[1]
-#             d += c[2]
-#
-#         dtv.append(d/av_count)
-#         dtv_bg.append(d_bg / av_count)
-#         dtv_motif.append(d_motif / av_count)
-#         print(k)
-#
-#     plt.scatter(ran, dtv)
-#     plt.grid()
-#     plt.title("Mean total variation distance vs. sample size")
-#     plt.xlabel("Sample size")
-#     plt.ylabel("$d_{tv}$")
-#     plt.ylim(0, 0.5)
-#     plt.show()
-#
-#     plt.scatter(ran, dtv_bg)
-#     plt.grid()
-#     plt.title("Mean total variation distance (background) vs. sample size")
-#     plt.xlabel("Sample size")
-#     plt.ylabel("$d_{tv}$")
-#     plt.ylim(0, 0.5)
-#     plt.show()
-#
-#     plt.scatter(ran, dtv_motif)
-#     plt.grid()
-#     plt.title("Mean total variation distance (motif) vs. sample size")
-#     plt.xlabel("Sample size")
-#     plt.ylabel("$d_{tv}$")
-#     plt.ylim(0, 0.5)
-#     plt.show()
-
-def visualize_k(param_file = "params_set1.json", ran = [50*k for k in range(1, 101)], av_count=3):
+def visualize_k(param_file = "params_set1.json", ran = [50*k for k in range(1, 21)], av_count=30):
 
     results = []
 
@@ -134,10 +71,12 @@ def visualize_k(param_file = "params_set1.json", ran = [50*k for k in range(1, 1
     ax.plot(k_vals, motif_means, '--s', label='Motif $d_{tv}$', alpha=0.8)
     ax.plot(k_vals, bg_means, '--^', label='Background $d_{tv}$', alpha=0.8)
 
-    ax.set_title(f'Algorithm Performance vs. Sample Size (k)\n(α={alpha_val}, w={w_val}, {av_count} runs per point)')
-    ax.set_xlabel("Sample Size (k)")
-    ax.set_ylabel("Average Total Variation Distance ($d_{tv}$)")
+    ax.set_title(f'Algorithm Performance vs. Sample Size (k)\n(α={alpha_val}, w={w_val}, {av_count} runs per point)', fontsize=16)
+    ax.set_xlabel("Sample Size (k)", fontsize=16)
+    ax.set_ylabel("Average Total Variation Distance ($d_{tv}$)", fontsize=16)
     ax.set_xticks(k_vals)
+    ax.tick_params(axis='x', labelsize=14)
+    ax.tick_params(axis='y', labelsize=14)
     ax.legend()
     ax.set_ylim(bottom=0)
     plt.tight_layout()
@@ -211,10 +150,12 @@ def visualize_alpha(param_file = "params_set1.json", ran = [10*a/100 for a in ra
     ax.plot(alpha_vals, motif_means, '--s', label='Motif $d_{tv}$', alpha=0.8)
     ax.plot(alpha_vals, bg_means, '--^', label='Background $d_{tv}$', alpha=0.8)
 
-    ax.set_title(f'Algorithm Performance vs. Motif Probability (α)\n(k={k_val}, w={w_val}, {av_count} runs per point)')
-    ax.set_xlabel("motif probability (α)")
-    ax.set_ylabel("Average Total Variation Distance ($d_{tv}$)")
+    ax.set_title(f'Algorithm Performance vs. Motif Probability (α)\n(k={k_val}, w={w_val}, {av_count} runs per point)', fontsize=16)
+    ax.set_xlabel("motif probability (α)", fontsize=16)
+    ax.set_ylabel("Average Total Variation Distance ($d_{tv}$)", fontsize=16)
     ax.set_xticks(alpha_vals)
+    ax.tick_params(axis='x', labelsize=14)
+    ax.tick_params(axis='y', labelsize=14)
     ax.legend()
     ax.set_ylim(bottom=0)
     plt.tight_layout()
@@ -288,36 +229,52 @@ def visualize_w(param_files, av_count=15):
     ax.plot(w_vals, motif_means, '--s', label='Motif $d_{tv}$', alpha=0.8)
     ax.plot(w_vals, bg_means, '--^', label='Background $d_{tv}$', alpha=0.8)
 
-    ax.set_title(f'Algorithm Performance vs. Motif Length (w) (random probabilities)  \n(k={k_val}, α={alpha}, {av_count} runs per point)')
-    ax.set_xlabel("Motif Length (w)")
-    ax.set_ylabel("Average Total Variation Distance ($d_{tv}$)")
+    ax.set_title(f'Algorithm Performance vs. Motif Length (w) (strong motif)  \n(k={k_val}, α={alpha}, {av_count} runs per point)', fontsize=16)
+    ax.set_xlabel("Motif Length (w)", fontsize=16)
+    ax.set_ylabel("Average Total Variation Distance ($d_{tv}$)", fontsize=16)
     ax.set_xticks(w_vals)
+    ax.tick_params(axis='x', labelsize=14)
+    ax.tick_params(axis='y', labelsize=14)
     ax.legend()
     ax.set_ylim(bottom=0)
     plt.tight_layout()
     plt.show()
 
+# param_files = [f"params_set_w{w_val}.json" for w_val in [3, 5, 8, 12]]
+# visualize_w(param_files=param_files, av_count=15)
+
 # param_files = [f"params_random_w{w_val}.json" for w_val in [3, 5, 8, 12]]
 # visualize_w(param_files=param_files, av_count=15)
 
-def visualize_motif_strength(strength_param_files, strength_labels, av_count=15):
-    results = []
+def visualize_motif_strength_boxplot(strength_param_files, strength_labels, av_count=15):
+    """
+    Visualizes algorithm performance against motif strength using boxplots.
+
+    Each boxplot shows the distribution of the total variation distance error
+    over multiple simulation runs for a given motif strength.
+    """
+    # This list will hold the lists of run results for each parameter file.
+    # e.g., [[0.1, 0.12, 0.09, ...], [0.05, 0.04, 0.06, ...], ...]
+    all_runs_data = []
+
+    # Store k and alpha for the plot title (assuming they are consistent)
+    k, alpha = None, None
+
     for param_file in strength_param_files:
         with open(param_file, 'r') as f:
             params = json.load(f)
 
-
+        # Extract parameters. Store the last seen k and alpha for the title.
         w, k, alpha = params['w'], params['k'], params['alpha']
         TrueTheta = np.asarray(params['Theta'])
         TrueThetaB = np.asarray(params['ThetaB'])
 
-        TrueThetaB_reshaped = TrueThetaB.reshape(-1, 1)
-        motif_strength = np.mean(var_dist(TrueTheta, TrueThetaB_reshaped))
-
+        # This list will store errors for the CURRENT strength level
         run_dtvs = []
         for i in range(av_count):
-
+            # Use a different seed for each run to ensure variability
             np.random.seed(42 + i)
+
             X, _ = generate_sample(w, k, alpha, TrueTheta, TrueThetaB)
 
             Theta_init = np.random.rand(4, w)
@@ -331,62 +288,51 @@ def visualize_motif_strength(strength_param_files, strength_labels, av_count=15)
             _, _, total_error = distance(TrueTheta, Theta_est, TrueThetaB, ThetaB_est)
             run_dtvs.append(total_error)
 
-        results.append({
-            'strength': motif_strength,
-            'error_mean': np.mean(run_dtvs),
-            'error_std': np.std(run_dtvs)
-        })
+        # KEY CHANGE: Append the entire list of raw error values for this strength level
+        all_runs_data.append(run_dtvs)
         print(f"Completed simulations for file: {param_file}")
 
-    if not results:
+    if not all_runs_data:
         print("No results to plot.")
         return
 
-    error_means = [r['error_mean'] for r in results]
-    error_stds = [r['error_std'] for r in results]
-
+    # --- Plotting Section ---
     plt.style.use('seaborn-v0_8-whitegrid')
-    fig, ax = plt.subplots(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(10, 7))
 
-    x_pos = np.arange(len(strength_labels))
-    bars = ax.bar(x_pos, error_means, yerr=error_stds, align='center',
-                  alpha=0.7, ecolor='black', capsize=10)
+    # KEY CHANGE: Use seaborn's boxplot to visualize the distribution of errors
+    sns.boxplot(data=all_runs_data, ax=ax, palette="viridis", width=0.6)
 
-    ax.set_ylabel("Average Total Variation Distance ($d_{tv}$ Error)")
-    ax.set_xlabel("Motif Information Strength")
-    ax.set_xticks(x_pos)
-    ax.set_xticklabels(strength_labels)
-    ax.set_title(f'Algorithm Performance vs. Motif Strength\n(k={k}, α={alpha}, {av_count} runs per strength level)')
+    # Update labels and title to be more descriptive of a distribution
+    ax.set_ylabel("Distribution of Total Variation Distance ($d_{tv}$ Error)", fontsize=16)
+    ax.set_xlabel("Motif Information Strength", fontsize=16)
+    ax.set_xticklabels(strength_labels, rotation=0, fontsize=16)  # Rotate for readability
+
+    # Check if k and alpha were found before adding to title
+    if k is not None and alpha is not None:
+        title = f'Algorithm Performance vs. Motif Strength\n(k={k}, α={alpha}, {av_count} runs per strength level)'
+    else:
+        title = f'Algorithm Performance vs. Motif Strength\n({av_count} runs per strength level)'
+    ax.set_title(title, fontsize=16)
+
     ax.yaxis.grid(True)
 
-    # Add the numerical strength value below each label for more information
-    # for i, res in enumerate(results):
-    #     ax.text(i, -0.05, f"(Strength: {res['strength']:.2f})",
-    #             ha='center', transform=ax.get_xaxis_transform(), color='gray')
-
-    plt.tight_layout(pad=2)
+    plt.tight_layout()
     plt.show()
 
-# param_files_for_strength_test = [
-#     "params_strength_weak.json",
-#     "params_strength_medium.json",
-#     "params_strength_strong.json"
-# ]
-#
-# # Labels for the x-axis of the bar chart
-# bar_labels = ["Weak", "Medium", "Strong"]
-#
-# visualize_motif_strength(
-#     strength_param_files=param_files_for_strength_test,
-#     strength_labels=bar_labels,
-#     av_count=15
-# )
+strength_files = [
+        'params_strength_weak.json',
+        'params_strength_medium.json',
+        'params_strength_strong.json'
+        ]
 
-import matplotlib.pyplot as plt
-import json
-from helper_functions import *
-from motif_340146_336942_generate import generate_sample
+labels = [
+        'Weak',
+        'Medium',
+        'Strong'
+        ]
 
+visualize_motif_strength_boxplot(strength_files, labels, av_count=20)
 
 def visualize_ll(param_file = "params_set1.json", av_count=15):
 
@@ -415,7 +361,7 @@ def visualize_ll(param_file = "params_set1.json", av_count=15):
         Theta[:(w), :] = np.random.random((3, w)) / w
         Theta[w, :] = 1 - np.sum(Theta, axis=0)
 
-        _, _, ll_t, ll_dt = em_algorithm(X, alpha, Theta, ThetaB, max_iter=100, tol=1e-10)
+        _, _, ll_t, ll_dt = em_algorithm(X, alpha, Theta, ThetaB, max_iter=100, tol=1e-10, plot_ll=True)
 
 
         ll.append(ll_t)
@@ -435,30 +381,36 @@ def visualize_ll(param_file = "params_set1.json", av_count=15):
 
     iterations_show = [i for i in range(1, 101, 1)]
     print(len(ll_means))
-    ax.errorbar(iterations_show, ll_means, yerr=ll_stds, fmt='-o', capsize=5, label='average log-likelihood value')
+    ax.errorbar(iterations_show, ll_means, fmt='-o', capsize=5, label='average log-likelihood value')
 
-    ax.set_title(f'Mean Log-likelihood Values Across Iterations of EM Algorithm\n(α = {alpha}, k={k}, w={w}, {av_count} runs per point)')
-    ax.set_xlabel("Iteration")
-    ax.set_ylabel("Average Log-likelihood Value")
-    ax.set_xticks(iterations_show)
-    ax.legend()
+    ax.set_title(f'Mean Log-likelihood Values Across Iterations of EM Algorithm\n(α = {alpha}, k={k}, w={w}, {av_count} runs per point)', fontsize=16)
+    ax.set_xlabel("Iteration", fontsize=16)
+    ax.set_ylabel("Average Log-likelihood Value (linear scale)", fontsize=16)
+    # ax.set_xticks(iterations_show)
+    ax.tick_params(axis='x', labelsize=14)
+    ax.tick_params(axis='y', labelsize=14)
+    ax.legend(fontsize=14)
+    # plt.yscale('log')
     plt.tight_layout()
     plt.show()
 
     plt.style.use('seaborn-v0_8-whitegrid')
     fig, ax = plt.subplots(figsize=(10, 6))
 
-    ax.errorbar(iterations_show, ll_d_means, fmt='-o', capsize=5, label='average log-likelihood value')
+    ax.errorbar(iterations_show, ll_d_means, fmt='-o', capsize=5, label='average log-likelihood difference value')
 
     ax.set_title(
-        f'Mean Log-likelihood Differences Across Iterations of EM Algorithm\n(α = {alpha}, k={k}, w={w}, {av_count} runs per point)')
-    ax.set_xlabel("Iteration")
-    ax.set_ylabel("Average Log-likelihood Difference (log scale)")
+        f'Mean Log-likelihood Differences Across Iterations of EM Algorithm\n(α = {alpha}, k={k}, w={w}, {av_count} runs per point)', fontsize=16)
+    ax.set_xlabel("Iteration", fontsize=16)
+    ax.set_ylabel("Average Log-likelihood Difference (log scale)", fontsize=16)
     # ax.set_xticks(iterations_show)
-    ax.legend()
+    ax.tick_params(axis='x', labelsize=14)
+    ax.tick_params(axis='y', labelsize=14)
+
+    ax.legend(fontsize=14)
     plt.yscale('log')
     plt.tight_layout()
     plt.show()
 
 
-# visualize_ll()
+visualize_ll()

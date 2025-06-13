@@ -7,7 +7,7 @@ def compute_log_likehood(X, alpha, Theta, ThetaB):
 
     return np.sum(np.log(alpha * np.exp(log_motif) + (1 - alpha) * np.exp(log_bg)))
 
-def em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-100):
+def em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-100, plot_ll=False):
 
     ll_differences = []
     ll_values = []
@@ -50,15 +50,14 @@ def em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-100):
 
         ll_values.append(ll)
         ll_differences.append(abs(new_ll - ll))
-
-        # comment if plotting ll
-        if abs(new_ll - ll) < tol:
-            print(f"number of iterations: {maximal_t}")
-            break
+        if not plot_ll:
+            if abs(new_ll - ll) < tol:
+                print(f"number of iterations: {maximal_t}")
+                break
     Theta, ThetaB = Theta.round(20), ThetaB.round(20)
 
-    # uncomment when plotting ll
-    # return Theta, ThetaB, ll_values, ll_differences
+    if plot_ll:
+        return Theta, ThetaB, ll_values, ll_differences
 
     return Theta, ThetaB
 
