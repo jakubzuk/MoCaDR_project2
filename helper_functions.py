@@ -9,6 +9,9 @@ def compute_log_likehood(X, alpha, Theta, ThetaB):
 
 def em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-100):
 
+    ll_differences = []
+    ll_values = []
+
     X = np.array(X, dtype=int)
     k, w = X.shape
     Theta = np.array(Theta)
@@ -18,22 +21,12 @@ def em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-100):
 
         # Expectation
 
-        # log_motif = np.sum(np.log(Theta[X, np.arange(w)]), axis=1)
-        # log_bg = np.sum(np.log(ThetaB[X]), axis=1)
-
-        # ll = np.sum(np.log(alpha * np.exp(log_motif) + (1 - alpha) * np.exp(log_bg)))
-
-        # p_motif = np.exp(log_motif)
-        # p_bg = np.exp(log_bg)
-
         p_motif = np.prod(Theta[X, np.arange(w)], axis=1)
         p_bg = np.prod(ThetaB[X], axis=1)
 
         ll = np.sum(np.log(alpha * p_motif + (1 - alpha) * p_bg))
 
         Q1 = (alpha * p_motif) / sum([alpha * p_motif, (1-alpha) * p_bg])
-
-        # ll = compute_log_likehood(X, alpha, Theta, ThetaB)
 
         # Maximization
 
@@ -48,7 +41,6 @@ def em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-100):
             counts_bg += (1 - Q1[i]) * np.bincount(X[i], minlength=4)
         ThetaB = counts_bg / counts_bg.sum()
 
-        # new_ll = compute_log_likehood(X, alpha, Theta, ThetaB)
 
         new_p_motif = np.prod(Theta[X, np.arange(w)], axis=1)
         new_p_bg = np.prod(ThetaB[X], axis=1)
@@ -56,11 +48,20 @@ def em_algorithm(X, alpha, Theta, ThetaB, max_iter = 1000, tol=1e-100):
 
         maximal_t += 1
 
+        ll_values.append(ll)
+        ll_differences.append(abs(new_ll - ll))
+
+        # comment if plotting ll
         if abs(new_ll - ll) < tol:
             print(f"number of iterations: {maximal_t}")
             break
     Theta, ThetaB = Theta.round(20), ThetaB.round(20)
+
+    # uncomment when plotting ll
+    # return Theta, ThetaB, ll_values, ll_differences
+
     return Theta, ThetaB
+
 
 def var_dist(dist_1, dist_2):
     return 0.5 * np.sum(np.abs(dist_1 - dist_2))
