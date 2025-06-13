@@ -24,12 +24,6 @@ The following libraries are required to run the code:
 - `json`
 - `argparse` 
 
-## Repository structure
-- **`report.pdf`** – Report which sums up whole project
-- **`README.MD`** – This file
-- **`project2_s340146_s336942`** – Directory storing actual project
-- **`plots`** - Directory storing generated plots used in the report
-- **`data`** - Directory storing data used for plots from the report
 
 ## Instructions
 There are two main files: `motif_340146_336942_generate.py` and `motif_340146_336942_estimate.py`. The first one should be used for data generation and the second should be used for parameters estimation. 
